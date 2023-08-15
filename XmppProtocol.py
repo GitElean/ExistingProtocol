@@ -206,30 +206,59 @@ class Agregar(slixmpp.ClientXMPP):
 #----------------------------------------------
 #Send messages class
 #----------------------------------------------
-class MSG():
-    def __init__(self, jid, password, to, message):
-        slixmpp.ClientXMPP.__init__(self, jid, password)
-        self.add_event_handler("session_start", self.start)
-        self.to = to
-        self.message = message
+class MSG(slixmpp.ClientXMPP):
+     def __init__(self, jid, password, recipient, message):
+          slixmpp.ClientXMPP.__init__(self, jid, password)
+          self.recipient = recipient
+          self.msg = message
+          self.add_event_handler("session_start", self.start)
+          self.add_event_handler("message", self.message)
+
+     async def start(self, event):
+          self.send_presence()
+          await self.get_roster()
+          self.send_message(mto=self.recipient,mbody=self.msg,mtype='chat')
+
+
+     def message(self, msg):
+          
+          if msg['type'] in ('chat'):
+          
+               recipient = msg['from']
+               body = msg['body']
+               print(str(recipient) +  ": " + str(body))
+               message = input("Mensaje: ")
+               self.send_message(mto=self.recipient,mbody=message)
 
 #----------------------------------------------
 #grupal chat class
 #----------------------------------------------
-class chatGrup():
+class Grupo(slixmpp.ClientXMPP):
+
     def __init__(self, jid, password, room, nick):
         slixmpp.ClientXMPP.__init__(self, jid, password)
-        self.add_event_handler("session_start", self.start)
+
+        self.jid = jid
         self.room = room
         self.nick = nick
 
+        self.add_event_handler("session_start", self.start)
+        self.add_event_handler("groupchat_message", self.muc_message)
+
     async def start(self, event):
-        self.send_presence()
+
         await self.get_roster()
+        self.send_presence()
         self.plugin['xep_0045'].join_muc(self.room, self.nick)
-        self.plugin['xep_0045'].configure_room(self.room)
-        self.plugin['xep_0045'].send_message(mto=self.room, mbody="Hola", mtype='groupchat')
-        self.disconnect()
+
+        message = input("Write the message: ")
+        self.send_message(mto=self.room, mbody=message, mtype='groupchat')
+
+    def muc_message(self, msg):
+        if(str(msg['from']).split('/')[1]!=self.nick):
+            print(str(msg['from']).split('/')[1] + ": " + msg['body'])
+            message = input("Mensaje: ")
+            self.send_message(mto=msg['from'].bare, mbody=message, mtype='groupchat')
 
 #----------------------------------------------
 #send files class
