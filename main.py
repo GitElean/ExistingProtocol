@@ -5,6 +5,8 @@ Client Main class, implement the rest of the classes and make the calls
 Implementation through CLI
 '''
 
+import XmppProtocol as xmpp
+
 #Menu
 def menu():
     print("+------------------------------------+")
