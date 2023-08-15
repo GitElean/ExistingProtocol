@@ -189,16 +189,47 @@ class Roster(slixmpp.ClientXMPP):
 #----------------------------------------------
 #Add contacts class
 #----------------------------------------------
+class Agregar(slixmpp.ClientXMPP):
+    def __init__(self, jid, password, to):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+        self.add_event_handler("session_start", self.start)
+        self.to = to
 
+    async def start(self, event):
+        self.send_presence()
+        await self.get_roster()
+        try:
+            self.send_presence_subscription(pto=self.to) 
+        except IqTimeout:
+            print("Timeout del server") 
+        self.disconnect()
 #----------------------------------------------
 #Send messages class
 #----------------------------------------------
-
+class MSG():
+    def __init__(self, jid, password, to, message):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+        self.add_event_handler("session_start", self.start)
+        self.to = to
+        self.message = message
 
 #----------------------------------------------
 #grupal chat class
 #----------------------------------------------
+class chatGrup():
+    def __init__(self, jid, password, room, nick):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+        self.add_event_handler("session_start", self.start)
+        self.room = room
+        self.nick = nick
 
+    async def start(self, event):
+        self.send_presence()
+        await self.get_roster()
+        self.plugin['xep_0045'].join_muc(self.room, self.nick)
+        self.plugin['xep_0045'].configure_room(self.room)
+        self.plugin['xep_0045'].send_message(mto=self.room, mbody="Hola", mtype='groupchat')
+        self.disconnect()
 
 #----------------------------------------------
 #send files class
