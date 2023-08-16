@@ -263,8 +263,81 @@ class Grupo(slixmpp.ClientXMPP):
 #----------------------------------------------
 #send files class
 #----------------------------------------------
+class Archivos(slixmpp.ClientXMPP):
+
+    def __init__(self, jid, password, receiver, filename):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+
+        self.receiver = receiver
+
+        self.file = open(filename, 'rb')
+        self.add_event_handler("session_start", self.start)
+
+    async def start(self, event):
+        try:
+            #Set the receiver
+            proxy = await self['xep_0065'].handshake(self.receiver)
+            while True:
+                data = self.file.read(1048576)
+                if not data:
+                    break
+                await proxy.write(data)
+
+            proxy.transport.write_eof()
+        except (IqError, IqTimeout) as e:
+            print('Timeout', e)
+        else:
+            print('Procedimiento terminado')
+        finally:
+            self.file.close()
+            self.disconnect()
 
 
 #----------------------------------------------
 #Notifications class
 #----------------------------------------------
+class Noti(slixmpp.ClientXMPP):
+
+    def __init__(self, jid, password, user, message, type_):
+        slixmpp.ClientXMPP.__init__(self, jid, password)
+
+        self.add_event_handler("session_start", self.start)
+        self.add_event_handler("message", self.message)
+        self.message = message
+        self.user = user
+        self.type_ = type_
+
+    async def start(self, event):
+        
+        self.send_presence()
+        await self.get_roster()
+
+     
+        self.notification_(self.user, self.message, 'active')
+
+    def notification_(self, to, body, my_type):
+        
+        message = self.Message()
+        message['to'] = to
+        message['type'] = self.type_
+        message['body'] = body
+
+        if (my_type == 'active'):
+            fragmentStanza = ET.fromstring("<active xmlns='http://jabber.org/protocol/chatstates'/>")
+        elif (my_type == 'composing'):
+            fragmentStanza = ET.fromstring("<composing xmlns='http://jabber.org/protocol/chatstates'/>")
+        elif (my_type == 'inactive'):
+            fragmentStanza = ET.fromstring("<inactive xmlns='http://jabber.org/protocol/chatstates'/>")
+        message.append(fragmentStanza)
+
+        try:
+            message.send()
+        except IqError as e:
+            print("Error", e)
+        except IqTimeout:
+            print("Timeout")
+
+    def message(self, msg):
+        recipient = msg['from']
+        body = msg['body']
+        print(str(recipient) +  ": " + str(body))
