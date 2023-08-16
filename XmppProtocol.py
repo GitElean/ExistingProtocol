@@ -9,6 +9,10 @@ Call of libraries and plugins
 #Import of libraries
 import sys
 import logging
+import aiodns
+import asyncio
+from getpass import getpass
+from argparse import ArgumentParser
 from slixmpp.exceptions import IqError, IqTimeout
 from slixmpp.xmlstream.stanzabase import ET, ElementBase 
 import slixmpp
