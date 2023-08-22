@@ -19,7 +19,7 @@ Existing protocol is a project about the use of the protocol XMPP an their utili
     - threading
     - ssl
 
-    
+
 ## Features
 ### Login
 Start a session in gajim with an existent user
@@ -57,3 +57,7 @@ If you already have al packages just need to execute "python/python3 main.py"
 https://www.geeksforgeeks.org/xmpp-protocol/
 https://xmpp.org/getting-started/
 https://slixmpp.readthedocs.io/en/latest/
+
+### uso de chatGPT y copilot
+El caso de ChatGPT, fue usado para las recomendaciones de librerias y como ordenar los métodos, Además de resolución de errores.
+Copilot se uso como herramienta de autocompletación y agilización en la escritura de métodos 

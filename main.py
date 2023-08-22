@@ -7,5 +7,5 @@ Implementation through CLI
 
 from XmppProtocol import menu
 
-
+#Llamada a la función del menú
 menu()

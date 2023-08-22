@@ -21,10 +21,12 @@ import base64, time
 import threading
 import ssl
 
-
+#windows 32bits issues
 if sys.platform == 'win32' and sys.version_info >= (3, 8):
      asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+#added by chatgpt reccomendation
 
+#debugging tool
 logging.basicConfig(level=logging.DEBUG)
 #----------------------------------------------
 #Register class
@@ -172,7 +174,7 @@ class Roster(slixmpp.ClientXMPP):
 
         self.disconnect()
 
-    def notification_(self, to, body, my_type):
+    def notification_(self, to, body, my_type):#stanzas para estados del servidor
 
         message = self.Message()
         message['to'] = to
@@ -371,7 +373,7 @@ def register_common_plugins(xmpp_instance):
 def disable_ssl_verification(xmpp_instance):
     ssl_context = ssl.create_default_context()
     ssl_context.check_hostname = False
-    ssl_context.verify_mode = ssl.CERT_NONE
+    ssl_context.verify_mode = ssl.CERT_NONE #Se eliminan los certificados o la espera de estos dada la falta de estos en el alumchat
 
     xmpp_instance.ssl_version = ssl.PROTOCOL_SSLv23
     xmpp_instance.ca_certs = None
@@ -433,6 +435,7 @@ def menu():
             psd = getpass("Ingrese contraseña: ")
             xmpp = RyE(usu, psd)
             register_common_plugins(xmpp)
+            disable_ssl_verification(xmpp)
             xmpp.connect()
             xmpp.process(forever=False)
             print("Registro Completado\n")
@@ -463,6 +466,7 @@ def menu():
                 xmpp = Roster(usu, psd)
                 register_common_plugins(xmpp)
                 disable_ssl_verification(xmpp)
+                #xmpp.use_legacy_starttls = True
                 xmpp.connect()
                 xmpp.process(forever=False)
             #add contacts
