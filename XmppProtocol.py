@@ -19,6 +19,13 @@ from slixmpp.xmlstream.stanzabase import ET, ElementBase
 import slixmpp
 import base64, time
 import threading
+import ssl
+
+
+if sys.platform == 'win32' and sys.version_info >= (3, 8):
+     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+logging.basicConfig(level=logging.DEBUG)
 #----------------------------------------------
 #Register class
 #----------------------------------------------
@@ -343,6 +350,18 @@ class Noti(slixmpp.ClientXMPP):
         body = msg['body']
         print(str(recipient) +  ": " + str(body))
 
+def register_common_plugins(xmpp_instance):
+    """
+    Registers commonly used plugins for a given XMPP instance.
+    """
+    plugins = ['xep_0030',  # Service Discovery
+               'xep_0199',  # XMPP Ping
+               'xep_0045',  # Multi-User Chat (MUC)
+               'xep_0096']  # Jabber Search
+    for plugin in plugins:
+        xmpp_instance.register_plugin(plugin)
+
+
 
 #Menu
 def menu():
@@ -426,6 +445,8 @@ def menu():
             #get contacts
             if(op2 =="1"):
                 xmpp = Roster(usu, psd)
+                xmpp.ssl_version = ssl.PROTOCOL_SSLv23
+                xmpp.ca_certs = None
                 xmpp.register_plugin('xep_0030') # Service Discovery
                 xmpp.register_plugin('xep_0199') # XMPP Ping
                 xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
