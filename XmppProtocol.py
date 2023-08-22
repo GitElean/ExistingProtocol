@@ -413,10 +413,7 @@ def menu():
             usu = input("Ingrese nuevo usuario: ")
             psd = getpass("Ingrese contraseña: ")
             xmpp = RyE(usu, psd)
-            xmpp.register_plugin('xep_0030') ### Service Discovery
-            xmpp.register_plugin('xep_0004') ### Data Forms
-            xmpp.register_plugin('xep_0066') ### Band Data
-            xmpp.register_plugin('xep_0077') ### Band Registration
+            register_common_plugins(xmpp)
             xmpp.connect()
             xmpp.process(forever=False)
             print("Registro Completado\n")
@@ -447,20 +444,14 @@ def menu():
                 xmpp = Roster(usu, psd)
                 xmpp.ssl_version = ssl.PROTOCOL_SSLv23
                 xmpp.ca_certs = None
-                xmpp.register_plugin('xep_0030') # Service Discovery
-                xmpp.register_plugin('xep_0199') # XMPP Ping
-                xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
-                xmpp.register_plugin('xep_0096') # Jabber Search
+                register_common_plugins(xmpp)
                 xmpp.connect()
                 xmpp.process(forever=False)
             #add contacts
             elif(op2 == "2"):
                 con = input("Escriba el Usuario del contacto: ") 
                 xmpp = Agregar(usu, psd, con)
-                xmpp.register_plugin('xep_0030') # Service Discovery
-                xmpp.register_plugin('xep_0199') # XMPP Ping
-                xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
-                xmpp.register_plugin('xep_0096') # Jabber Search
+                register_common_plugins(xmpp)
                 xmpp.connect()
                 xmpp.process(forever=False)
 
@@ -468,10 +459,7 @@ def menu():
             elif(op2 == "3"):
                 con = input("Escriba el Usuario del contacto: ") 
                 xmpp = Roster(usu, psd, con)
-                xmpp.register_plugin('xep_0030') # Service Discovery
-                xmpp.register_plugin('xep_0199') # XMPP Ping
-                xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
-                xmpp.register_plugin('xep_0096') # Jabber Search
+                register_common_plugins(xmpp)
                 xmpp.connect()
                 xmpp.process(forever=False)
 
@@ -481,10 +469,7 @@ def menu():
                         cont = input("Ingrese el recipiente: ") 
                         msg = input("Mensaje: ")
                         xmpp = MSG(usu, psd, cont, msg)
-                        xmpp.register_plugin('xep_0030') # Service Discovery
-                        xmpp.register_plugin('xep_0199') # XMPP Ping
-                        xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
-                        xmpp.register_plugin('xep_0096') # Jabber Search
+                        register_common_plugins(xmpp)
                         xmpp.connect()
                         xmpp.process(forever=False)
                 except KeyboardInterrupt as e:
@@ -511,10 +496,7 @@ def menu():
             elif(op2 == "6"):
                 msg = input("indique su mensaje de presencia: ") 
                 xmpp = Roster(usu, psd, show=False, message=msg)
-                xmpp.register_plugin('xep_0030') # Service Discovery
-                xmpp.register_plugin('xep_0199') # XMPP Ping
-                xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
-                xmpp.register_plugin('xep_0096') # Jabber Search
+                register_common_plugins
                 xmpp.connect()
                 xmpp.process(forever=False)
             #Files. NOt working
@@ -536,10 +518,7 @@ def menu():
                         msg = input("Mensaje: ")
                         ty = input("Type: ")
                         xmpp = Noti(usu, psd, para, msg, ty)
-                        xmpp.register_plugin('xep_0030') # Service Discovery
-                        xmpp.register_plugin('xep_0199') # XMPP Ping
-                        xmpp.register_plugin('xep_0045') # Mulit-User Chat (MUC)
-                        xmpp.register_plugin('xep_0096') # Jabber Search
+                        register_common_plugins(xmpp)
                         xmpp.connect()
                         xmpp.process(forever=False)
                 except KeyboardInterrupt as e:
@@ -549,10 +528,7 @@ def menu():
             elif(op2 == "9"):
                 
                 xmpp = Del(usu, psd)
-                xmpp.register_plugin('xep_0030') # Service Discovery
-                xmpp.register_plugin('xep_0004') # Data forms
-                xmpp.register_plugin('xep_0066') # Out-of-band Data
-                xmpp.register_plugin('xep_0077') # In-band Registration
+                register_common_plugins(xmpp)
                 xmpp.connect()
                 xmpp.process()
                 xmpp = None
