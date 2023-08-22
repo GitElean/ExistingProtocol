@@ -350,6 +350,10 @@ class Noti(slixmpp.ClientXMPP):
         body = msg['body']
         print(str(recipient) +  ": " + str(body))
 
+
+#----------------------------------------------
+#method to register plugins
+#----------------------------------------------
 def register_common_plugins(xmpp_instance):
     """
     Registers commonly used plugins for a given XMPP instance.
@@ -361,9 +365,24 @@ def register_common_plugins(xmpp_instance):
     for plugin in plugins:
         xmpp_instance.register_plugin(plugin)
 
+#----------------------------------------------
+#method to disable ssl
+#----------------------------------------------
+def disable_ssl_verification(xmpp_instance):
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+
+    xmpp_instance.ssl_version = ssl.PROTOCOL_SSLv23
+    xmpp_instance.ca_certs = None
+    xmpp_instance.ssl_context = ssl_context
+#Solución a problema de conexión SSL por falta de protocolo conodico brindad por chatGPT                
 
 
-#Menu
+
+#----------------------------------------------
+#method for the menu
+#----------------------------------------------
 def menu():
     print("+------------------------------------+")
     print("|    Bienvendio ¿que deseas hacer?   |")
@@ -442,9 +461,8 @@ def menu():
             #get contacts
             if(op2 =="1"):
                 xmpp = Roster(usu, psd)
-                xmpp.ssl_version = ssl.PROTOCOL_SSLv23
-                xmpp.ca_certs = None
                 register_common_plugins(xmpp)
+                disable_ssl_verification(xmpp)
                 xmpp.connect()
                 xmpp.process(forever=False)
             #add contacts
@@ -452,6 +470,7 @@ def menu():
                 con = input("Escriba el Usuario del contacto: ") 
                 xmpp = Agregar(usu, psd, con)
                 register_common_plugins(xmpp)
+                disable_ssl_verification()
                 xmpp.connect()
                 xmpp.process(forever=False)
 
@@ -460,6 +479,7 @@ def menu():
                 con = input("Escriba el Usuario del contacto: ") 
                 xmpp = Roster(usu, psd, con)
                 register_common_plugins(xmpp)
+                disable_ssl_verification(xmpp)
                 xmpp.connect()
                 xmpp.process(forever=False)
 
@@ -470,6 +490,7 @@ def menu():
                         msg = input("Mensaje: ")
                         xmpp = MSG(usu, psd, cont, msg)
                         register_common_plugins(xmpp)
+                        disable_ssl_verification(xmpp)
                         xmpp.connect()
                         xmpp.process(forever=False)
                 except KeyboardInterrupt as e:
@@ -486,6 +507,7 @@ def menu():
                             xmpp.register_plugin('xep_0030')
                             xmpp.register_plugin('xep_0045')
                             xmpp.register_plugin('xep_0199')
+                            disable_ssl_verification(xmpp)
                             xmpp.connect()
                             xmpp.process(forever=False)
                 except KeyboardInterrupt as e:
@@ -497,6 +519,7 @@ def menu():
                 msg = input("indique su mensaje de presencia: ") 
                 xmpp = Roster(usu, psd, show=False, message=msg)
                 register_common_plugins
+                disable_ssl_verification(xmpp)
                 xmpp.connect()
                 xmpp.process(forever=False)
             #Files. NOt working
@@ -506,6 +529,7 @@ def menu():
                 xmpp = Archivos(usu, psd, para, file)
                 xmpp.register_plugin('xep_0030') # Service Discovery
                 xmpp.register_plugin('xep_0065') # SOCKS5 Bytestreams
+                disable_ssl_verification(xmpp)
                 xmpp.connect()
                 xmpp.process(forever=False)
 
@@ -519,6 +543,7 @@ def menu():
                         ty = input("Type: ")
                         xmpp = Noti(usu, psd, para, msg, ty)
                         register_common_plugins(xmpp)
+                        disable_ssl_verification(xmpp)
                         xmpp.connect()
                         xmpp.process(forever=False)
                 except KeyboardInterrupt as e:
@@ -529,6 +554,7 @@ def menu():
                 
                 xmpp = Del(usu, psd)
                 register_common_plugins(xmpp)
+                disable_ssl_verification(xmpp)
                 xmpp.connect()
                 xmpp.process()
                 xmpp = None
